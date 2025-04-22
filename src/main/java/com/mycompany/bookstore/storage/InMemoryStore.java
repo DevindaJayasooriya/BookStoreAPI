@@ -6,6 +6,7 @@ package com.mycompany.bookstore.storage;
 
 import com.mycompany.bookstore.exception.AuthorNotFoundException;
 import com.mycompany.bookstore.exception.BookNotFoundException;
+import com.mycompany.bookstore.exception.CustomerNotFoundException;
 import com.mycompany.bookstore.exception.InvalidInputException;
 import com.mycompany.bookstore.model.Author;
 import com.mycompany.bookstore.model.Book;
@@ -26,8 +27,9 @@ public class InMemoryStore {
     private Map<Integer, Customer> customers;
 
     public InMemoryStore() {
-        this.books = new HashMap<>();;
+        this.books = new HashMap<>();
         this.authors = new HashMap<>();    
+        this.customers = new HashMap<>();    
     }
     
     //add books
@@ -83,6 +85,10 @@ public class InMemoryStore {
     books.remove(bookId);
     }
     
+    
+    
+    
+    
     //add author
     public void addAuthor (Author author)throws InvalidInputException {
         if(author == null){
@@ -130,4 +136,74 @@ public class InMemoryStore {
         }
         authors.remove(authorId);
     }
+    
+    
+    
+    //add customer
+    public void addCustomer(Customer customer) throws InvalidInputException{
+        if(customer == null){
+            throw new InvalidInputException("Customer can not be null");
+        }
+        if(customers.containsKey(customer.getId())){
+            throw new InvalidInputException("Customer with ID " + customer.getId() + " already exists");
+        }
+        customers.put(customer.getId(), customer);
+
+    }
+    
+    //get customer by Id
+    public Customer getCustomerById(int customerId) throws CustomerNotFoundException{
+        Customer customer = customers.get(customerId);
+        if(customer == null){
+            throw new CustomerNotFoundException("Customer with ID " + customerId + " not found");
+        }
+        return customer;
+    }
+    
+    //get all customers 
+    public List<Customer> getAllCustomers(){
+        return new ArrayList<>(customers.values());
+    }
+    
+    //update customer
+    public void updateCustomer (int customerId, Customer updatedCustomer) throws CustomerNotFoundException, InvalidInputException{
+        if(updatedCustomer == null){
+            throw new InvalidInputException ("Updated customer can not be null");
+        }
+        if(!customers.containsKey(customerId)){
+            throw new CustomerNotFoundException("Customer with ID " + customerId + " not found");        
+        } 
+        if(customerId != updatedCustomer.getId()){
+            throw new InvalidInputException("Customer ID in path (" + customerId + ") does not match author ID in body (" + updatedCustomer.getId() + ")");
+        }
+        customers.put(customerId, updatedCustomer);
+    }
+    
+    //delete customer
+    public void deleteCustomer(int customerId) throws CustomerNotFoundException {
+        if(!customers.containsKey(customerId)){
+            throw new CustomerNotFoundException("Customer with ID " + customerId + " not found"); 
+        }
+        customers.remove(customerId);
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
