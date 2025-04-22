@@ -4,6 +4,7 @@
  */
 package com.mycompany.bookstore.storage;
 
+import com.mycompany.bookstore.exception.AuthorNotFoundException;
 import com.mycompany.bookstore.exception.BookNotFoundException;
 import com.mycompany.bookstore.exception.InvalidInputException;
 import com.mycompany.bookstore.model.Author;
@@ -93,10 +94,10 @@ public class InMemoryStore {
     }
     
     //get author by ID
-    public Author getAuthorById(int authorId) throws AuthorNotFounsException {
+    public Author getAuthorById(int authorId) throws AuthorNotFoundException {
         Author author = authors.get(authorId);
         if(author == null){
-            throw new AuthorNotFounsException ("Author with ID " + authorId + " not found");
+            throw new AuthorNotFoundException ("Author with ID " + authorId + " not found");
         }
         return author;
     }
@@ -107,12 +108,12 @@ public class InMemoryStore {
     }
     
     //update author 
-    public void updateAuthor(int authorId, Author updatedAuthor) throws AuthorNotFounsException, InvalidInputException {
+    public void updateAuthor(int authorId, Author updatedAuthor) throws AuthorNotFoundException, InvalidInputException {
         if(updatedAuthor == null){
             throw new InvalidInputException ("Updated author can not be null");
         }
         if(!authors.containsKey(authorId)){
-            throw new AuthorNotFounsException("Author with ID " + authorId + " not found");        
+            throw new AuthorNotFoundException("Author with ID " + authorId + " not found");        
         } 
         if(authorId != updatedAuthor.getId()){
             throw new InvalidInputException("Author ID in path (" + authorId + ") does not match author ID in body (" + updatedAuthor.getId() + ")");

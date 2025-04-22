@@ -8,6 +8,8 @@ package com.mycompany.bookstore.exception;
  *
  * @author devinda
  */
-public class AuthorNotFoundException {
-    
+public class AuthorNotFoundException extends Exception {
+    public AuthorNotFoundException(String message) {
+        super(message);
+    }
 }
