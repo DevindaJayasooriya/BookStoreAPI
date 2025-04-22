@@ -6,8 +6,10 @@ package com.mycompany.bookstore.storage;
 
 import com.mycompany.bookstore.exception.BookNotFoundException;
 import com.mycompany.bookstore.exception.InvalidInputException;
+import com.mycompany.bookstore.model.Author;
 import com.mycompany.bookstore.model.Book;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,9 +20,11 @@ import java.util.Map;
 public class InMemoryStore {
     
     private Map<Integer, Book> books;
+    private Map<Integer, Author> authors;
 
     public InMemoryStore() {
-        this.books = books;
+        this.books = new HashMap<>();;
+        this.authors = new HashMap<>();    
     }
     
     //add books
@@ -46,6 +50,7 @@ public class InMemoryStore {
         return book;
     }
 
+    //get all books
     public List<Book> getAllBooks() {
         return new ArrayList<>(books.values());
     }
@@ -73,5 +78,45 @@ public class InMemoryStore {
             throw new BookNotFoundException("Book with ID " + bookId + " not found");
         }
     books.remove(bookId);
+    }
+    
+    //add author
+    public void addAuthor (Author author)throws InvalidInputException {
+        if(author == null){
+            throw new InvalidInputException("Author cannot be null");
+        }
+        if(authors.containsKey(author.getId())){
+            throw new InvalidInputException("Author with ID " + author.getId() + " already exists");
+        }
+       authors.put(author.getId(), author);
+
+    }
+    
+    //get author by ID
+    public Author getAuthorById(int authorId) throws AuthorNotFounsException {
+        Author author = authors.get(authorId);
+        if(author == null){
+            throw new AuthorNotFounsException ("Author with ID " + authorId + " not found");
+        }
+        return author;
+    }
+    
+    //get all authors 
+    public List<Author> getAllAuthors(){
+        return new ArrayList<>(authors.values());
+    }
+    
+    //update author 
+    public void updateAuthor(int authorId, Author updatedAuthor) throws AuthorNotFounsException, InvalidInputException {
+        if(updatedAuthor == null){
+            throw new InvalidInputException ("Updated author can not be null");
+        }
+        if(!authors.containsKey(authorId)){
+            throw new AuthorNotFounsException("Author with ID " + authorId + " not found");        
+        } 
+        if(authorId != updatedAuthor.getId()){
+            throw new InvalidInputException("Author ID in path (" + authorId + ") does not match author ID in body (" + updatedAuthor.getId() + ")");
+        }
+        authors.put(authorId, updatedAuthor);
     }
 }
