@@ -8,6 +8,8 @@ package com.mycompany.bookstore.exception;
  *
  * @author devinda
  */
-public class CustomerNotFoundException {
-    
+public class CustomerNotFoundException extends Exception {
+    public CustomerNotFoundException(String message) {
+        super(message);
+    }
 }

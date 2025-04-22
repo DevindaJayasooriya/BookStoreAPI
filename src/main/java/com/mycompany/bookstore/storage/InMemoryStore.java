@@ -9,6 +9,7 @@ import com.mycompany.bookstore.exception.BookNotFoundException;
 import com.mycompany.bookstore.exception.InvalidInputException;
 import com.mycompany.bookstore.model.Author;
 import com.mycompany.bookstore.model.Book;
+import com.mycompany.bookstore.model.Customer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +23,7 @@ public class InMemoryStore {
     
     private Map<Integer, Book> books;
     private Map<Integer, Author> authors;
+    private Map<Integer, Customer> customers;
 
     public InMemoryStore() {
         this.books = new HashMap<>();;
@@ -119,5 +121,13 @@ public class InMemoryStore {
             throw new InvalidInputException("Author ID in path (" + authorId + ") does not match author ID in body (" + updatedAuthor.getId() + ")");
         }
         authors.put(authorId, updatedAuthor);
+    }
+    
+    //delete author
+    public void deleteAuthor(int authorId) throws AuthorNotFoundException {
+        if(!authors.containsKey(authorId)){
+            throw new AuthorNotFoundException("Author with ID " + authorId + " not found"); 
+        }
+        authors.remove(authorId);
     }
 }
