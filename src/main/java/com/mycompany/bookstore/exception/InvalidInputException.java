@@ -8,6 +8,8 @@ package com.mycompany.bookstore.exception;
  *
  * @author devinda
  */
-public class InvalidInputException {
-    
+public class InvalidInputException extends Exception {
+    public InvalidInputException(String message) {
+        super(message);
+    }
 }
