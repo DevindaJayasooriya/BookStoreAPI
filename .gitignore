@@ -1,0 +1,26 @@
+# NetBeans-specific files
+nbproject/
+build.xml
+dist/
+
+# Maven build output
+target/
+
+# IDE and editor files
+.idea/
+.vscode/
+*.iml
+
+# Local environment files
+.DS_Store
+*.log
+*.tmp
+
+# Compiled Java files and build artifacts
+*.class
+*.jar
+*.war
+
+# Sensitive information (if applicable)
+.env
+config.properties
