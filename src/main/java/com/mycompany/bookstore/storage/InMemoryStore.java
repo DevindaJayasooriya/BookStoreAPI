@@ -271,6 +271,27 @@ public class InMemoryStore {
         }
     }
     
+    
+    //remove cart item
+    public void removeItemFromCart(int customerId, int bookId) throws CustomerNotFoundException, InvalidInputException {
+       if (!customers.containsKey(customerId)) {
+        throw new CustomerNotFoundException("Customer with ID " + customerId + " not found");
+    }
+    Cart cart = carts.get(customerId);
+        if (cart == null) {
+            throw new InvalidInputException("Cart not found for customer ID " + customerId);
+        }
+        if (!cart.getItems().containsKey(bookId)) {
+            throw new InvalidInputException("Book ID " + bookId + " not found in cart");
+        }
+
+        cart.getItems().remove(bookId);
+        if (cart.getItems().isEmpty()) {
+            carts.remove(customerId);
+        } else {
+            carts.put(customerId, cart);
+        } 
+    }
 }
 
 
