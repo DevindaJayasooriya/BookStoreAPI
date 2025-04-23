@@ -10,6 +10,7 @@ import com.mycompany.bookstore.exception.CustomerNotFoundException;
 import com.mycompany.bookstore.exception.InvalidInputException;
 import com.mycompany.bookstore.model.Author;
 import com.mycompany.bookstore.model.Book;
+import com.mycompany.bookstore.model.Cart;
 import com.mycompany.bookstore.model.Customer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,6 +26,7 @@ public class InMemoryStore {
     private Map<Integer, Book> books;
     private Map<Integer, Author> authors;
     private Map<Integer, Customer> customers;
+    private Map<Integer, Cart> carts;
 
     public InMemoryStore() {
         this.books = new HashMap<>();
@@ -186,6 +188,40 @@ public class InMemoryStore {
         }
         customers.remove(customerId);
     }
+    
+    
+    //add items to cart
+    public void addItemToCart(int customerId, int bookId, int quantity ) throws CustomerNotFoundException , BookNotFoundException, InvalidInputException {
+        if(!customers.containsKey(customerId)){
+            throw new CustomerNotFoundException("Customer with ID " + customerId + " not found");
+        }
+        if(!books.containsKey(bookId)){
+            throw new BookNotFoundException ("Book with ID " + bookId + " not found");
+        }
+        if(quantity<=0){
+            throw new InvalidInputException("Quantity must be greater than zero");
+        }
+        
+        Book book = books.get(bookId);
+        Cart cart = carts.get(customerId);
+        
+        int totalQuantity = quantity;
+        if(cart != null && cart.getItems().containsKey(bookId) ){
+            totalQuantity += cart.getItems().get(bookId);
+        }
+        if (totalQuantity > book.getStock()) {
+            throw new OutOfStockException("Not enough stock for book ID " + bookId + ". Requested: " + totalQuantity + ", Available: " + book.getStock());
+        }
+        
+        //no cart exists, create a new one
+        if (cart == null) {
+        cart = new Cart(customerId);
+        }
+        cart.getItems().put(bookId, totalQuantity);
+        carts.put(customerId, cart);
+    }
+    
+    
 }
 
 
