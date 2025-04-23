@@ -352,21 +352,21 @@ public class InMemoryStore {
     //clearCart(customerId);
 }
     //get order by id9
-    public Order getOrderById(int customerId, int orderId) throws CustomerNotFoundException, OrderNotFoundException, InvalidInputException {
-    if (!customers.containsKey(customerId)) {
-        throw new CustomerNotFoundException("Customer with ID " + customerId + " not found");
-    }
-    if (!orders.containsKey(orderId)) {
-        throw new OrderNotFoundException("Order with ID " + orderId + " not found");
-    }
+    public Order getOrderById(int customerId, int orderId) throws CustomerNotFoundException, InvalidInputException {
+        if (!customers.containsKey(customerId)) {
+            throw new CustomerNotFoundException("Customer with ID " + customerId + " not found");
+        }
+        if (!orders.containsKey(orderId)) {
+            throw new InvalidInputException("Order with ID " + orderId + " not found");
+        }
 
-    Order order = orders.get(orderId);
-    if (order.getCustomerId() != customerId) {
-        throw new InvalidInputException("Order with ID " + orderId + " does not belong to customer ID " + customerId);
-    }
+        Order order = orders.get(orderId);
+        if (order.getCustomerId() != customerId) {
+            throw new InvalidInputException("Order with ID " + orderId + " does not belong to customer ID " + customerId);
+        }
 
-    return order;
-    }
+        return order;
+}
     
     //get order by customer id
     public List<Order> getOrdersByCustomerId(int customerId) throws CustomerNotFoundException {
@@ -382,7 +382,7 @@ public class InMemoryStore {
     }
 
     return customerOrders;
-}
+    }
 }
 
 
