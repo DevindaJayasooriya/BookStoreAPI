@@ -8,6 +8,7 @@ import com.mycompany.bookstore.exception.AuthorNotFoundException;
 import com.mycompany.bookstore.exception.BookNotFoundException;
 import com.mycompany.bookstore.exception.CustomerNotFoundException;
 import com.mycompany.bookstore.exception.InvalidInputException;
+import com.mycompany.bookstore.exception.OutOfStockException;
 import com.mycompany.bookstore.model.Author;
 import com.mycompany.bookstore.model.Book;
 import com.mycompany.bookstore.model.Cart;
@@ -232,6 +233,42 @@ public class InMemoryStore {
             cart = new Cart(customerId);
         }
         return cart;
+    }
+    
+    //update cart item
+    public void updateCartItem (int customerId, int bookId, int quantity) throws CustomerNotFoundException , BookNotFoundException, InvalidInputException,OutOfStockException {
+        if(!customers.containsKey(customerId)){
+            throw new CustomerNotFoundException("Customer with ID " + customerId + " not found");
+        }
+        Cart cart = carts.get(customerId);
+        if (cart == null) {
+            throw new InvalidInputException("Cart not found for customer ID " + customerId);
+        }
+        if(!books.containsKey(bookId)){
+            throw new BookNotFoundException ("Book with ID " + bookId + " not found");
+        }
+        if (!cart.getItems().containsKey(bookId)) {
+            throw new InvalidInputException("Book ID " + bookId + " not found in cart");
+        }
+        if(quantity< 0){
+            throw new InvalidInputException("Quantity can not be negativve");
+        }
+        if (quantity == 0) {
+        cart.getItems().remove(bookId);
+        } 
+        else {
+        Book book = books.get(bookId);
+            if (quantity > book.getStock()) {
+                throw new OutOfStockException("Not enough stock for book ID " + bookId + ". Requested: " + quantity + ", Available: " + book.getStock());
+            }
+        cart.getItems().put(bookId, quantity);
+        }
+
+        if (cart.getItems().isEmpty()) {
+            carts.remove(customerId);
+        } else {
+            carts.put(customerId, cart);
+        }
     }
     
 }
