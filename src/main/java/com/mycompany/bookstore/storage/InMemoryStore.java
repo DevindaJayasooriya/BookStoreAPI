@@ -222,6 +222,18 @@ public class InMemoryStore {
     }
     
     
+    //get cart by customerId
+    public Cart getCartByCustomerId(int customerId)throws CustomerNotFoundException {
+        if(!customers.containsKey(customerId)){
+            throw new CustomerNotFoundException("Customer with ID " + customerId + " not found");
+        }
+        Cart cart = carts.get(customerId);
+        if (cart == null){
+            cart = new Cart(customerId);
+        }
+        return cart;
+    }
+    
 }
 
 
