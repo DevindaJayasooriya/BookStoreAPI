@@ -38,7 +38,9 @@ public class InMemoryStore {
     public InMemoryStore() {
         this.books = new HashMap<>();
         this.authors = new HashMap<>();    
-        this.customers = new HashMap<>();    
+        this.customers = new HashMap<>(); 
+        this.carts = new HashMap<>();  
+        this.orders = new HashMap<>();
     }
     
     //add books
@@ -297,6 +299,90 @@ public class InMemoryStore {
             carts.put(customerId, cart);
         } 
     }
+    
+    
+    //create order 
+    public void createOrder(int orderId, int customerId) throws CustomerNotFoundException, InvalidInputException, BookNotFoundException, OutOfStockException {
+        if (!customers.containsKey(customerId)) {
+            throw new CustomerNotFoundException("Customer with ID " + customerId + " not found");
+        }
+        if (orders.containsKey(orderId)) {
+            throw new InvalidInputException("Order with ID " + orderId + " already exists");
+        }
+
+        Cart cart = carts.get(customerId);
+        if (cart == null || cart.getItems().isEmpty()) {
+            throw new InvalidInputException("Cart is empty or not found for customer ID " + customerId);
+        }
+
+        // Validate stock and calculate total price
+        double totalPrice = 0.0;
+        for (Map.Entry<Integer, Integer> entry : cart.getItems().entrySet()) {
+            int bookId = entry.getKey();
+            int quantity = entry.getValue();
+
+            if (!books.containsKey(bookId)) {
+                throw new BookNotFoundException("Book with ID " + bookId + " not found");
+            }
+            Book book = books.get(bookId);
+            if (quantity > book.getStock()) {
+                throw new OutOfStockException("Not enough stock for book ID " + bookId + ". Requested: " + quantity + ", Available: " + book.getStock());
+            }
+
+            // Calculate price for this item (price * quantity) and add to total
+            totalPrice += book.getPrice() * quantity;
+        }
+
+    // Create the order with the calculated totalPrice
+    Order order = new Order(orderId, customerId, cart.getItems(), totalPrice);
+
+    // Update stock for each book
+    for (Map.Entry<Integer, Integer> entry : cart.getItems().entrySet()) {
+        int bookId = entry.getKey();
+        int quantity = entry.getValue();
+        Book book = books.get(bookId);
+        book.setStock(book.getStock() - quantity);
+        books.put(bookId, book);
+    }
+
+    // Add the order to the orders map
+    orders.put(orderId, order);
+
+    // Clear the cart
+    //clearCart(customerId);
+}
+    //get order by id9
+    public Order getOrderById(int customerId, int orderId) throws CustomerNotFoundException, OrderNotFoundException, InvalidInputException {
+    if (!customers.containsKey(customerId)) {
+        throw new CustomerNotFoundException("Customer with ID " + customerId + " not found");
+    }
+    if (!orders.containsKey(orderId)) {
+        throw new OrderNotFoundException("Order with ID " + orderId + " not found");
+    }
+
+    Order order = orders.get(orderId);
+    if (order.getCustomerId() != customerId) {
+        throw new InvalidInputException("Order with ID " + orderId + " does not belong to customer ID " + customerId);
+    }
+
+    return order;
+    }
+    
+    //get order by customer id
+    public List<Order> getOrdersByCustomerId(int customerId) throws CustomerNotFoundException {
+    if (!customers.containsKey(customerId)) {
+        throw new CustomerNotFoundException("Customer with ID " + customerId + " not found");
+    }
+
+    List<Order> customerOrders = new ArrayList<>();
+    for (Order order : orders.values()) {
+        if (order.getCustomerId() == customerId) {
+            customerOrders.add(order);
+        }
+    }
+
+    return customerOrders;
+}
 }
 
 

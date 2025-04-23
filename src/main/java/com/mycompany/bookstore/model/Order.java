@@ -13,7 +13,7 @@ import java.util.Map;
 public class Order {
     private int orderId;
     private int customerId;
-    private Map<Integer, Integer> items; // Map of bookId to quantity
+    private Map<Integer, Integer> items; 
     private double totalPrice;
 
      // Constructor
@@ -24,7 +24,7 @@ public class Order {
     public Order(int orderId, int customerId, Map<Integer, Integer> items, double totalPrice) {
         this.orderId = orderId;
         this.customerId = customerId;
-        this.items = new HashMap<>(items); // Create a copy to avoid modifying the original
+        this.items = new HashMap<>(items); 
         this.totalPrice = totalPrice;
     }
 
