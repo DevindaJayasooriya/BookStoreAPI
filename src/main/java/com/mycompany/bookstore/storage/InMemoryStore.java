@@ -44,12 +44,15 @@ public class InMemoryStore {
     }
     
     //add books
-    public void addBook(Book book)throws InvalidInputException {
+    public void addBook(Book book)throws InvalidInputException, AuthorNotFoundException {
         if(book == null){
             throw new InvalidInputException("book can not be null");
         }
         if(books.containsKey(book.getId())){
             throw new InvalidInputException("Book with ID " + book.getId() + " already exists");
+        }
+        if (!authors.containsKey(book.getAuthorId())) {
+            throw new AuthorNotFoundException("Author with ID " + book.getAuthorId() + " not found");
         }
         if (book.getPublicationYear() > 2025) {
             throw new InvalidInputException("Publication year cannot be in the future: " + book.getPublicationYear());
@@ -72,7 +75,7 @@ public class InMemoryStore {
     }
     
     //update books
-    public void updateBook (int bookId, Book updatedBook) throws BookNotFoundException , InvalidInputException{
+    public void updateBook (int bookId, Book updatedBook) throws BookNotFoundException , InvalidInputException, AuthorNotFoundException{
         if(updatedBook == null){
             throw new InvalidInputException("Updated book cannot be null");            
         }
@@ -82,6 +85,9 @@ public class InMemoryStore {
         if (bookId != updatedBook.getId()) {
             throw new InvalidInputException("Book ID in path (" + bookId + ") does not match book ID in body (" + updatedBook.getId() + ")");
         }
+        if (!authors.containsKey(updatedBook.getAuthorId())) {
+            throw new AuthorNotFoundException("Author with ID " + updatedBook.getAuthorId() + " not found");
+            }
         if (updatedBook.getPublicationYear() > 2025) {
         throw new InvalidInputException("Publication year cannot be in the future: " + updatedBook.getPublicationYear());
         }
