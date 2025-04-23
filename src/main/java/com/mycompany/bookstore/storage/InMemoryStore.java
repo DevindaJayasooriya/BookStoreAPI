@@ -4,19 +4,24 @@
  */
 package com.mycompany.bookstore.storage;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.mycompany.bookstore.exception.AuthorNotFoundException;
 import com.mycompany.bookstore.exception.BookNotFoundException;
 import com.mycompany.bookstore.exception.CustomerNotFoundException;
 import com.mycompany.bookstore.exception.InvalidInputException;
 import com.mycompany.bookstore.exception.OutOfStockException;
+
 import com.mycompany.bookstore.model.Author;
 import com.mycompany.bookstore.model.Book;
 import com.mycompany.bookstore.model.Cart;
 import com.mycompany.bookstore.model.Customer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.mycompany.bookstore.model.Order;
+
+
 
 /**
  *
@@ -28,6 +33,7 @@ public class InMemoryStore {
     private Map<Integer, Author> authors;
     private Map<Integer, Customer> customers;
     private Map<Integer, Cart> carts;
+    private Map<Integer, Order> orders;
 
     public InMemoryStore() {
         this.books = new HashMap<>();
@@ -192,7 +198,7 @@ public class InMemoryStore {
     
     
     //add items to cart
-    public void addItemToCart(int customerId, int bookId, int quantity ) throws CustomerNotFoundException , BookNotFoundException, InvalidInputException {
+    public void addItemToCart(int customerId, int bookId, int quantity ) throws CustomerNotFoundException , BookNotFoundException, InvalidInputException, OutOfStockException {
         if(!customers.containsKey(customerId)){
             throw new CustomerNotFoundException("Customer with ID " + customerId + " not found");
         }
@@ -211,8 +217,7 @@ public class InMemoryStore {
             totalQuantity += cart.getItems().get(bookId);
         }
         if (totalQuantity > book.getStock()) {
-            throw new OutOfStockException("Not enough stock for book ID " + bookId + ". Requested: " + totalQuantity + ", Available: " + book.getStock());
-        }
+            throw new OutOfStockException("Not enough stock for book ID " + bookId + ". Requested: " + totalQuantity + ", Available: " + book.getStock());        }
         
         //no cart exists, create a new one
         if (cart == null) {
