@@ -106,52 +106,49 @@ public class InMemoryStore {
     
     
     
-    //add author
-    public void addAuthor (Author author)throws InvalidInputException {
-        if(author == null){
+    
+    //add authors
+    public void addAuthor(Author author) throws InvalidInputException {
+        if (author == null) {
             throw new InvalidInputException("Author cannot be null");
         }
-        if(authors.containsKey(author.getId())){
+        if (authors.containsKey(author.getId())) {
             throw new InvalidInputException("Author with ID " + author.getId() + " already exists");
         }
-       authors.put(author.getId(), author);
-
+        authors.put(author.getId(), author);
     }
-    
-    //get author by ID
-    public Author getAuthorById(int authorId) throws AuthorNotFoundException {
-        Author author = authors.get(authorId);
-        if(author == null){
-            throw new AuthorNotFoundException ("Author with ID " + authorId + " not found");
+
+    //get author by id
+    public Author getAuthorById(int id) throws AuthorNotFoundException {
+        Author author = authors.get(id);
+        if (author == null) {
+            throw new AuthorNotFoundException("Author with ID " + id + " not found");
         }
         return author;
     }
-    
-    //get all authors 
-    public List<Author> getAllAuthors(){
+
+    //get all authors
+    public List<Author> getAllAuthors() {
         return new ArrayList<>(authors.values());
     }
     
-    //update author 
-    public void updateAuthor(int authorId, Author updatedAuthor) throws AuthorNotFoundException, InvalidInputException {
-        if(updatedAuthor == null){
-            throw new InvalidInputException ("Updated author can not be null");
+    //update author
+    public void updateAuthor(int id, Author author) throws AuthorNotFoundException, InvalidInputException {
+        if (!authors.containsKey(id)) {
+            throw new AuthorNotFoundException("Author with ID " + id + " not found");
         }
-        if(!authors.containsKey(authorId)){
-            throw new AuthorNotFoundException("Author with ID " + authorId + " not found");        
-        } 
-        if(authorId != updatedAuthor.getId()){
-            throw new InvalidInputException("Author ID in path (" + authorId + ") does not match author ID in body (" + updatedAuthor.getId() + ")");
+        if (author.getId() != id) {
+            throw new InvalidInputException("Author ID in path (" + id + ") does not match Author ID in body (" + author.getId() + ")");
         }
-        authors.put(authorId, updatedAuthor);
+        authors.put(id, author);
     }
-    
+
     //delete author
-    public void deleteAuthor(int authorId) throws AuthorNotFoundException {
-        if(!authors.containsKey(authorId)){
-            throw new AuthorNotFoundException("Author with ID " + authorId + " not found"); 
+    public void deleteAuthor(int id) throws AuthorNotFoundException {
+        if (!authors.containsKey(id)) {
+            throw new AuthorNotFoundException("Author with ID " + id + " not found");
         }
-        authors.remove(authorId);
+        authors.remove(id);
     }
     
     
